@@ -6,3 +6,6 @@ amount of time to process a single request. Each request will have an ID defined
 will be used to identify which request got processed at the end.
 
 The rate limiter will be 3 request per second, if the 4th request is sent, it'll be denied
+
+## Testing
+Go to the project root, execute the main go file then run `make deny` to simulate few denies or `make run` for a single request
