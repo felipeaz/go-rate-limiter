@@ -9,3 +9,5 @@ The rate limiter will be 3 request per second, if the 4th request is sent, it'll
 
 ## Testing
 Go to the project root, execute the main go file then run `make deny` to simulate few denies or `make run` for a single request
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/32846823/214162095-8d2b34f6-ce55-4e95-b6ef-b559ef29753f.gif)
