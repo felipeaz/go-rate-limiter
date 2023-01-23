@@ -1,19 +1,24 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/time/rate"
 )
 
 const (
-	requestIdKey = "reqID"
+	requestIdKey             = "reqID"
+	requestsPerSecond        = 3
+	maxTokensConsumedPerCall = 3
 )
 
 var (
 	requestCounter = 0
-	processingTime = time.Second * 10
+	processingTime = time.Second * 2
+	rpsLimiter     = rate.NewLimiter(requestsPerSecond, maxTokensConsumedPerCall)
 )
 
 type testHandler struct {
@@ -34,6 +39,15 @@ func (h *testHandler) testEndpoint(c *gin.Context) {
 	}
 }
 
+func rateLimiterMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !rpsLimiter.Allow() {
+			c.JSON(http.StatusTooManyRequests, gin.H{"error": "max requests per second (RPS) reached."})
+			c.Abort()
+		}
+	}
+}
+
 func requestIdMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set(requestIdKey, requestCounter)
@@ -49,7 +63,9 @@ func registerHandler(router *gin.Engine) {
 
 func main() {
 	server := gin.Default()
+	server.Use(rateLimiterMiddleware())
 	server.Use(requestIdMiddleware())
+
 	registerHandler(server)
 
 	err := server.Run(":8080")

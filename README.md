@@ -5,4 +5,4 @@ In this example, I created a simple endpoint that handles a request for 10 secon
 amount of time to process a single request. Each request will have an ID defined on the requestID middleware, that ID
 will be used to identify which request got processed at the end.
 
-The rate limiter will be 3 request at time, if the 4th request is sent, it'll be denied
+The rate limiter will be 3 request per second, if the 4th request is sent, it'll be denied
